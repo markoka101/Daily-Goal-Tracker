@@ -1,0 +1,19 @@
+{
+  "name": "daily-goal-tracker",
+  "version": "1.0.0",
+  "description": "software to track daily goals ",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "Mark Oka",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^35.0.1",
+    "electron-builder": "^25.1.8",
+    "electron-is-dev": "^3.0.1"
+  },
+  "dependencies": {
+    "react": "^19.0.0"
+  }
+}
