@@ -3,11 +3,12 @@ import { electronAPI } from '@electron-toolkit/preload';
 
 // Custom APIs for renderer
 const api = {
-	createUser: (userData) => ipcRenderer.invoke('saveUser', userData),
-	createTask: (user, taskData) => ipcRenderer.invoke('saveTasks', user, taskData),
-	getUser: (name) => ipcRenderer.invoke('getUser', name),
+	createUser: (event, username, settings) =>
+		ipcRenderer.invoke('saveUser', event, username, settings),
+	createTask: (event, user, taskData) => ipcRenderer.invoke('saveTasks', event, user, taskData),
+	getUser: (event, name) => ipcRenderer.invoke('getUser', event, name),
 	getUsers: () => ipcRenderer.invoke('getUsers'),
-	getTasks: (user) => ipcRenderer.invoke('getTasks', user)
+	getTasks: (event, user) => ipcRenderer.invoke('getTasks', event, user)
 };
 
 // Use `contextBridge` APIs to expose Electron APIs to

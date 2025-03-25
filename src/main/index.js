@@ -14,13 +14,15 @@ async function initializeApp() {
 	userStore = new StoreManager('users');
 
 	//Handle the saveUser and saveTasks events
-	ipcMain.handle('saveUser', (user) => {
-		if (userStore.getUser(user.name) !== null) {
+	ipcMain.handle('saveUser', (event, username, settings) => {
+		if (userStore.getUser(username) !== null) {
+			console.log('User already exists');
 			return;
 		}
-		userStore.saveUser(new User(user.name, user.settings));
+
+		userStore.saveUser(new User(username, settings));
 	});
-	ipcMain.handle('saveTasks', (userName, taskData) => {
+	ipcMain.handle('saveTasks', (event, userName, taskData) => {
 		const task = new Task(
 			taskData.name,
 			taskData.username,
@@ -29,22 +31,22 @@ async function initializeApp() {
 			taskData.dateCreated,
 			taskData.dueDate
 		);
-		const user = userStore.getUser(userName);
+		const user = userStore.getUser(event, userName);
 		taskStore.saveTasks(user, task, userStore);
 	});
 
 	//get the user by name
-	ipcMain.handle('getUser', (name) => {
+	ipcMain.handle('getUser', (event, name) => {
 		return userStore.getUser(name);
 	});
 
 	//get all users
-	ipcMain.handle('getUsers', () => {
+	ipcMain.handle('getUsers', (event) => {
 		return userStore.getUsers();
 	});
 
 	//get tasks by user
-	ipcMain.handle('getTasks', (userName) => {
+	ipcMain.handle('getTasks', (event, userName) => {
 		const user = userStore.getUser(userName);
 		return taskStore.getTasks(user);
 	});
