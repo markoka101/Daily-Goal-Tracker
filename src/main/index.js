@@ -14,13 +14,13 @@ async function initializeApp() {
 	userStore = new StoreManager('users');
 
 	//Handle the saveUser and saveTasks events
-	ipcMain.handle('saveUser', (event, user) => {
+	ipcMain.handle('saveUser', (user) => {
 		if (userStore.getUser(user.name) !== null) {
 			return;
 		}
 		userStore.saveUser(new User(user.name, user.settings));
 	});
-	ipcMain.handle('saveTasks', (event, userName, taskData) => {
+	ipcMain.handle('saveTasks', (userName, taskData) => {
 		const task = new Task(
 			taskData.name,
 			taskData.username,
@@ -34,17 +34,17 @@ async function initializeApp() {
 	});
 
 	//get the user by name
-	ipcMain.handle('getUser', (event, name) => {
+	ipcMain.handle('getUser', (name) => {
 		return userStore.getUser(name);
 	});
 
 	//get all users
-	ipcMain.handle('getUsers', (event) => {
+	ipcMain.handle('getUsers', () => {
 		return userStore.getUsers();
 	});
 
 	//get tasks by user
-	ipcMain.handle('getTasks', (event, userName) => {
+	ipcMain.handle('getTasks', (userName) => {
 		const user = userStore.getUser(userName);
 		return taskStore.getTasks(user);
 	});
