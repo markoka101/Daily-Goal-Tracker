@@ -15,9 +15,9 @@ async function initializeApp() {
 
 	//Handle the saveUser and saveTasks events
 	ipcMain.handle('saveUser', (event, username, settings) => {
+		//throw error if the user exists
 		if (userStore.getUser(username) !== null) {
-			console.log('User already exists');
-			return null;
+			throw new Error('User already exists');
 		}
 		const user = new User(username, settings);
 
@@ -38,6 +38,11 @@ async function initializeApp() {
 
 	//get the user by name
 	ipcMain.handle('getUser', (event, name) => {
+		//throw error if the user doesn't exist
+		if (userStore.getUser(name) === null) {
+			throw new Error('User does not exist');
+		}
+
 		return userStore.getUser(name);
 	});
 
@@ -50,7 +55,7 @@ async function initializeApp() {
 	ipcMain.handle('getTasks', (event, userName) => {
 		const user = userStore.getUser(userName);
 		if (user === null) {
-			return null;
+			throw new Error('User does not exist');
 		}
 		return taskStore.getTasks(user);
 	});
