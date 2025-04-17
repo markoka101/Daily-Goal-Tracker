@@ -23,7 +23,10 @@ async function initializeApp() {
 
 		userStore.saveUser(user);
 	});
+
 	ipcMain.handle('saveTasks', (event, userName, taskData) => {
+		userStore.incTaskAmt(userName);
+
 		const task = new Task(
 			taskData.name,
 			taskData.username,
@@ -32,8 +35,7 @@ async function initializeApp() {
 			taskData.dateCreated,
 			taskData.dueDate
 		);
-		const user = userStore.getUser(event, userName);
-		taskStore.saveTasks(user, task, userStore);
+		taskStore.saveTasks(userName, task, userStore);
 	});
 
 	//get the user by name
@@ -89,7 +91,7 @@ function createWindow() {
 	if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
 		mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);
 	} else {
-		mainWindow.loadFile(join(__dirname, '../renderer/index.html'), { hash: '/' });
+		mainWindow.loadFile(join(__dirname, '../renderer/index.html'));
 	}
 }
 

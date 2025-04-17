@@ -3,7 +3,7 @@ let Store;
 
 //class for users
 export class User {
-	constructor(name, settings) {
+	constructor(name, settings, taskAmt, taskCompleted) {
 		this.name = name;
 		this.settings = settings;
 		this.taskAmt = 0;
@@ -19,8 +19,8 @@ export class User {
 	}
 
 	//increment the amount of tasks whenever we create a new one
-	incAmt() {
-		this.taskAmt++;
+	incAmt(amt) {
+		this.taskAmt = amt + 1;
 	}
 
 	//increment when tasks are completed
@@ -31,14 +31,13 @@ export class User {
 
 //class for tasks
 export class Task {
-	constructor(id, name, username, description, status, dateCreated, dueDate) {
-		this.id = id;
+	constructor(name, username, description, status, dateCreated, dueDate) {
 		this.name = name;
+		this.usernamme = username;
 		this.description = description;
 		this.status = status;
 		this.dateCreated = dateCreated;
 		this.dueDate = dueDate;
-		this.usernamme = username;
 	}
 
 	/*
@@ -84,6 +83,17 @@ export class StoreManager {
 		return userData ? new User(userData.name, userData.settings) : null;
 	}
 
+	//get user's task amt
+	getTaskAmt(name) {
+		return this.store.get(`users.${name}.taskAmt`);
+	}
+
+	//increase the task amount for this user
+	incTaskAmt(user) {
+		const num = this.store.get(`users.${user}.taskAmt`) + 1;
+		this.store.set(`users.${user}.taskAmt`, num);
+		return num;
+	}
 	//get all users
 	getUsers() {
 		return this.store.store.users;
@@ -91,18 +101,14 @@ export class StoreManager {
 
 	//save tasks that were created by this user
 	saveTasks(user, task, userStore) {
-		user.incAmt();
-		userStore.saveUser(user);
-
-		task.id = user.taskAmt;
-		this.store.set(`${user.name}.${user.taskAmt}`, task);
+		this.store.set(`${user}.${userStore.getTaskAmt(user)}`, task);
 	}
 
 	//find tasks that were created by this user
 	getTasks(user) {
 		const tasksData = this.store.store;
 		return Object.fromEntries(
-			Object.entries(tasksData).filter(([key, value]) => {
+			Object.entries(tasksData).filter((key) => {
 				return key === user;
 			})
 		);
