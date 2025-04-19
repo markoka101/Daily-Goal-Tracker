@@ -9,24 +9,6 @@ export class User {
 		this.taskAmt = 0;
 		this.taskCompleted = 0;
 	}
-
-	setSetting(setting) {
-		this.settings = setting;
-	}
-
-	setName(name) {
-		this.name = name;
-	}
-
-	//increment the amount of tasks whenever we create a new one
-	incAmt(amt) {
-		this.taskAmt = amt + 1;
-	}
-
-	//increment when tasks are completed
-	complete() {
-		this.taskCompleted++;
-	}
 }
 
 //class for tasks
@@ -37,22 +19,6 @@ export class Task {
 		this.description = description;
 		this.status = status;
 		this.dateCreated = dateCreated;
-		this.dueDate = dueDate;
-	}
-
-	/*
-	Editing specific fields for the task
-	*/
-	editDescription(description) {
-		this.description = description;
-	}
-	editName(name) {
-		this.name = name;
-	}
-	editStatus(status) {
-		this.status = status;
-	}
-	editDueDate(dueDate) {
 		this.dueDate = dueDate;
 	}
 }
@@ -72,6 +38,10 @@ export class StoreManager {
 		Store = module.default;
 	}
 
+	/*
+		Functions for users
+	*/
+
 	//save user
 	saveUser(user) {
 		this.store.set(`users.${user.name}`, user);
@@ -81,6 +51,11 @@ export class StoreManager {
 	getUser(name) {
 		const userData = this.store.get(`users.${name}`);
 		return userData ? new User(userData.name, userData.settings) : null;
+	}
+
+	//edit user settings
+	editSettings(name, settings) {
+		this.store.set(`users.${name}.settings`, settings);
 	}
 
 	//get user's task amt
@@ -99,12 +74,22 @@ export class StoreManager {
 		return this.store.store.users;
 	}
 
+	/*
+	Functions for tasks
+	*/
+
 	//save tasks that were created by this user
 	saveTasks(user, task, userStore) {
 		this.store.set(`${user}.${userStore.getTaskAmt(user)}`, task);
 	}
 
-	//find tasks that were created by this user
+	//edit task will just be saving new instance since that is easier
+	//worse performance, but easier
+	editTask(user, taskNum, task) {
+		this.store.set(`${user}.${taskNum}`, task);
+	}
+
+	//find all tasks that were created by this user
 	getTasks(user) {
 		const tasksData = this.store.store;
 		return Object.fromEntries(
