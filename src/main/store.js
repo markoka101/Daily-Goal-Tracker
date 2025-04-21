@@ -26,6 +26,8 @@ export class Task {
 //class to handle storage
 //probably going to create classes which extend instead of having the million functions in here
 //since depending on file location we will only use some of the total functions
+//I probably should've admitted defeat and just used sqlite or postgres, but I'm in too deep now
+//and I don't want to rewrite everything
 export class StoreManager {
 	//constructor with param of location so we know the file to save to
 	constructor(location) {
@@ -49,8 +51,7 @@ export class StoreManager {
 
 	//get user by name
 	getUser(name) {
-		const userData = this.store.get(`users.${name}`);
-		return userData ? new User(userData.name, userData.settings) : null;
+		return this.store.get(`users.${name}`);
 	}
 
 	//edit user settings
@@ -83,6 +84,11 @@ export class StoreManager {
 		this.store.set(`${user}.${userStore.getTaskAmt(user)}`, task);
 	}
 
+	//complete tasks
+	completeTask(user, taskNum) {
+		this.store.set(`${user}.${taskNum}.status`, 'completed');
+	}
+
 	//edit task will just be saving new instance since that is easier
 	//worse performance, but easier
 	editTask(user, taskNum, task) {
@@ -90,6 +96,7 @@ export class StoreManager {
 	}
 
 	//find all tasks that were created by this user
+	//further filtering and sorting can be done in frontend
 	getTasks(user) {
 		const tasksData = this.store.store;
 		return Object.fromEntries(

@@ -24,6 +24,7 @@ async function initializeApp() {
 		userStore.saveUser(user);
 	});
 
+	//save new task, then return said task
 	ipcMain.handle('saveTasks', (event, userName, taskData) => {
 		userStore.incTaskAmt(userName);
 
@@ -35,7 +36,7 @@ async function initializeApp() {
 			taskData.dateCreated,
 			taskData.dueDate
 		);
-		taskStore.saveTasks(userName, task, userStore);
+		return taskStore.saveTasks(userName, task, userStore);
 	});
 
 	//get the user by name
