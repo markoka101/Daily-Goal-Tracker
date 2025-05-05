@@ -80,8 +80,11 @@ export class StoreManager {
 	*/
 
 	//save tasks that were created by this user
+	//return task so we can quickly access it in the frontend
 	saveTasks(user, task, userStore) {
-		this.store.set(`${user}.${userStore.getTaskAmt(user)}`, task);
+		const taskAmt = userStore.getTaskAmt(user);
+		this.store.set(`${user}.${taskAmt}`, task);
+		return this.store.get(`${user}.${taskAmt}`);
 	}
 
 	//complete tasks
@@ -90,19 +93,14 @@ export class StoreManager {
 	}
 
 	//edit task will just be saving new instance since that is easier
-	//worse performance, but easier
 	editTask(user, taskNum, task) {
 		this.store.set(`${user}.${taskNum}`, task);
+		return this.store.get(`${user}.${taskNum}`);
 	}
 
-	//find all tasks that were created by this user
+	//find tasks that were created by this user
 	//further filtering and sorting can be done in frontend
 	getTasks(user) {
-		const tasksData = this.store.store;
-		return Object.fromEntries(
-			Object.entries(tasksData).filter((key) => {
-				return key === user;
-			})
-		);
+		return this.store.get(user);
 	}
 }
