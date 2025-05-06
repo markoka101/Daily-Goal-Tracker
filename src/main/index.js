@@ -60,6 +60,7 @@ async function initializeApp() {
 		if (user === null) {
 			throw new Error('User does not exist');
 		}
+
 		return taskStore.getTasks(user);
 	});
 }
